@@ -1,0 +1,47 @@
+<!-- Minimal template for displaying todos -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo List</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'todo.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Todo List</h1>
+        {% if edit_id %}
+            <form method="post" action="{% url 'todo_update' edit_id %}" class="todo-form">
+                {% csrf_token %}
+                {{ form.title }}
+                <button type="submit" class="btn btn-update">Update</button>
+                <a href="/" class="btn btn-cancel">Cancel</a>
+            </form>
+        {% else %}
+            <form method="post" class="todo-form">
+                {% csrf_token %}
+                {{ form.title }}
+                <button type="submit" class="btn btn-add">Add Todo</button>
+            </form>
+        {% endif %}
+        <ul class="todo-list">
+            {% for todo in todos %}
+                <li class="todo-item{% if todo.completed %} done{% endif %}">
+                    <form method="post" action="{% url 'todo_toggle' todo.pk %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="toggle-btn" title="Toggle completed">{% if todo.completed %}✔{% else %}○{% endif %}</button>
+                    </form>
+                    <span class="todo-title">{{ todo.title }}</span>
+                    <a href="{% url 'todo_update' todo.pk %}" class="btn btn-edit">Edit</a>
+                    <form method="post" action="{% url 'todo_delete' todo.pk %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-delete" title="Delete">Delete</button>
+                    </form>
+                    {% if todo.completed %}<span class="done-label">(Done)</span>{% endif %}
+                </li>
+            {% empty %}
+                <li>No todos yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
