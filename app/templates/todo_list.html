@@ -17,7 +17,7 @@
                 <a href="/" class="btn btn-cancel">Cancel</a>
             </form>
         {% else %}
-            <form method="post" class="todo-form">
+            <form method="post" action="{% url 'todo_add' %}" class="todo-form">
                 {% csrf_token %}
                 {{ form.title }}
                 <button type="submit" class="btn btn-add">Add Todo</button>

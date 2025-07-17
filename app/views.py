@@ -3,19 +3,23 @@ from django.shortcuts import render
 
 from .models import Todo
 from .forms import TodoForm
+from django.shortcuts import get_object_or_404, redirect
 
 def todo_list(request):
-    if request.method == 'POST':
-        form = TodoForm(request.POST)
-        if form.is_valid():
-            form.save()
-    else:
-        form = TodoForm()
+    form = TodoForm()
     todos = Todo.objects.all()
     return render(request, 'todo_list.html', {'todos': todos, 'form': form})
 
+from django.views.decorators.http import require_POST
 
-from django.shortcuts import get_object_or_404, redirect
+@require_POST
+def todo_add(request):
+    form = TodoForm(request.POST)
+    if form.is_valid():
+        form.save()
+    return redirect('todo_list')
+
+
 
 def todo_update(request, pk):
     todo = get_object_or_404(Todo, pk=pk)
